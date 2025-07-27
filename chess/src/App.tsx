@@ -55,55 +55,41 @@ function App() {
          { type: "castle", color: "w", image: "chess-pieces/castle_w.png" },
       ],
    ]);
-   const [selectedPiece, setSelectedPiece] = useState<{
-      type: string;
-      color: string;
-      row: number;
-      col: number;
-   } | null>(null);
-   const [validMoves, setValidMoves] = useState<{ row: number; col: number }[]>([]);
+   const [selectedCell, setSelectedCell] = useState<[number, number] | null>(null);
+   const [validMoves, setValidMoves] = useState<[number, number][]>([]);
 
-   const showValidMoves = () => {
-      const moves: { row: number; col: number }[] = [];
-      if (!selectedPiece) {
-         setValidMoves([]);
+   const showValidMoves = (type: string, color: string, row: number, col: number) => {
+      if (selectedCell && selectedCell[0] == row && selectedCell[1] == col) {
+         setSelectedCell(null);
          return;
       }
-      const { type, color, row, col } = selectedPiece;
+
+      setSelectedCell([row, col]);
+      const moves: [number, number][] = [];
 
       if (type === "pawn") {
-         const dir = color === "w" ? -1 : 1;
-         const nextRow = row + dir;
+         const direction = color === "w" ? -1 : 1;
+         const startRow = color === "w" ? 6 : 1;
 
-         // One step forward if empty
-         if (!board[nextRow]?.[col]?.type) {
-            moves.push({ row: nextRow, col });
+         // Move 1 step forward if empty
+         if (board[row + direction]?.[col]?.type === undefined) {
+            moves.push([row + direction, col]);
+
+            // Move 2 steps forward from starting row
             if (
-               ((row == 6 && color == "w") || (row == 1 && color == "b")) &&
-               !board[nextRow]?.[col]?.type
+               row === startRow &&
+               board[row + direction * 2]?.[col]?.type === undefined
             ) {
-               // checking if it is the first ever move for this particular pawn, then it can move another step,
-               // given no obstacle.
-               moves.push({ row: nextRow + dir, col });
+               moves.push([row + direction * 2, col]);
             }
          }
 
-         // diagonal kill
-         const leftCorner = col - 1;
-         const rightCorner = col + 1;
-         if (
-            leftCorner >= 0 &&
-            board[nextRow]?.[leftCorner]?.type &&
-            board[nextRow]?.[leftCorner]?.type !== "pawn"
-         ) {
-            moves.push({ row: nextRow + dir, col: leftCorner });
-         }
-         if (
-            rightCorner < 8 &&
-            board[nextRow]?.[rightCorner]?.type &&
-            board[nextRow]?.[rightCorner]?.type !== "pawn"
-         ) {
-            moves.push({ row: nextRow + dir, col: rightCorner });
+         // Captures diagonally
+         for (const dCol of [-1, 1]) {
+            const target = board[row + direction]?.[col + dCol];
+            if (target && target.color && target.color !== color) {
+               moves.push([row + direction, col + dCol]);
+            }
          }
       }
 
@@ -117,31 +103,23 @@ function App() {
                <div className="flex" key={rowIndex}>
                   {row.map((piece, colIndex) => {
                      const isLight = (rowIndex + colIndex) % 2 === 0;
-                     const isValidMove = validMoves.find(
-                        (move) => move.row === rowIndex && move.col === colIndex
-                     );
 
                      return (
                         <div
                            key={colIndex}
+                           onClick={() =>
+                              showValidMoves(piece.type, piece.color, rowIndex, colIndex)
+                           }
                            className={`w-16 h-16 border flex items-center justify-center ${
                               isLight ? "bg-amber-100" : "bg-amber-600"
-                           } ${isValidMove && "border-green-500 border-4"}`}
-                           onClick={() => {
-                              showValidMoves();
-                              setSelectedPiece((prev) => {
-                                 if ((prev && prev.col !== colIndex) || prev === null) {
-                                    return {
-                                       type: piece.type,
-                                       color: piece.color,
-                                       row: rowIndex,
-                                       col: colIndex,
-                                    };
-                                 } else {
-                                    return null;
-                                 }
-                              });
-                           }}
+                           }
+                            ${
+                               validMoves.some(
+                                  ([r, c]) => r === rowIndex && c === colIndex
+                               )
+                                  ? "border-4 border-green-400"
+                                  : ""
+                            }`}
                         >
                            {piece?.image && (
                               <img
@@ -169,92 +147,6 @@ function App() {
          <div className="flex items-center justify-between relative">
             {/* Board */}
             {updateAndDrawBoard()}
-         </div>
-
-         <div className="flex items-center justify-between">
-            {/* Board second style, still yet to decide if this is the correct format*/}
-            {/* <div className="border">
-               <div className="flex">
-                  <div className="border w-16 h-16 bg-amber-100"></div>
-                  <div className="border w-16 h-16 bg-amber-600"></div>
-                  <div className="border w-16 h-16 bg-amber-100"></div>
-                  <div className="border w-16 h-16 bg-amber-600"></div>
-                  <div className="border w-16 h-16 bg-amber-100"></div>
-                  <div className="border w-16 h-16 bg-amber-600"></div>
-                  <div className="border w-16 h-16 bg-amber-100"></div>
-                  <div className="border w-16 h-16 bg-amber-600"></div>
-               </div>
-               <div className="flex">
-                  <div className="border w-16 h-16 bg-amber-600"></div>
-                  <div className="border w-16 h-16 bg-amber-100"></div>
-                  <div className="border w-16 h-16 bg-amber-600"></div>
-                  <div className="border w-16 h-16 bg-amber-100"></div>
-                  <div className="border w-16 h-16 bg-amber-600"></div>
-                  <div className="border w-16 h-16 bg-amber-100"></div>
-                  <div className="border w-16 h-16 bg-amber-600"></div>
-                  <div className="border w-16 h-16 bg-amber-100"></div>
-               </div>
-               <div className="flex">
-                  <div className="border w-16 h-16 bg-amber-100"></div>
-                  <div className="border w-16 h-16 bg-amber-600"></div>
-                  <div className="border w-16 h-16 bg-amber-100"></div>
-                  <div className="border w-16 h-16 bg-amber-600"></div>
-                  <div className="border w-16 h-16 bg-amber-100"></div>
-                  <div className="border w-16 h-16 bg-amber-600"></div>
-                  <div className="border w-16 h-16 bg-amber-100"></div>
-                  <div className="border w-16 h-16 bg-amber-600"></div>
-               </div>
-               <div className="flex">
-                  <div className="border w-16 h-16 bg-amber-600"></div>
-                  <div className="border w-16 h-16 bg-amber-100"></div>
-                  <div className="border w-16 h-16 bg-amber-600"></div>
-                  <div className="border w-16 h-16 bg-amber-100"></div>
-                  <div className="border w-16 h-16 bg-amber-600"></div>
-                  <div className="border w-16 h-16 bg-amber-100"></div>
-                  <div className="border w-16 h-16 bg-amber-600"></div>
-                  <div className="border w-16 h-16 bg-amber-100"></div>
-               </div>
-               <div className="flex">
-                  <div className="border w-16 h-16 bg-amber-100"></div>
-                  <div className="border w-16 h-16 bg-amber-600"></div>
-                  <div className="border w-16 h-16 bg-amber-100"></div>
-                  <div className="border w-16 h-16 bg-amber-600"></div>
-                  <div className="border w-16 h-16 bg-amber-100"></div>
-                  <div className="border w-16 h-16 bg-amber-600"></div>
-                  <div className="border w-16 h-16 bg-amber-100"></div>
-                  <div className="border w-16 h-16 bg-amber-600"></div>
-               </div>
-               <div className="flex">
-                  <div className="border w-16 h-16 bg-amber-600"></div>
-                  <div className="border w-16 h-16 bg-amber-100"></div>
-                  <div className="border w-16 h-16 bg-amber-600"></div>
-                  <div className="border w-16 h-16 bg-amber-100"></div>
-                  <div className="border w-16 h-16 bg-amber-600"></div>
-                  <div className="border w-16 h-16 bg-amber-100"></div>
-                  <div className="border w-16 h-16 bg-amber-600"></div>
-                  <div className="border w-16 h-16 bg-amber-100"></div>
-               </div>
-               <div className="flex">
-                  <div className="border w-16 h-16 bg-amber-100"></div>
-                  <div className="border w-16 h-16 bg-amber-600"></div>
-                  <div className="border w-16 h-16 bg-amber-100"></div>
-                  <div className="border w-16 h-16 bg-amber-600"></div>
-                  <div className="border w-16 h-16 bg-amber-100"></div>
-                  <div className="border w-16 h-16 bg-amber-600"></div>
-                  <div className="border w-16 h-16 bg-amber-100"></div>
-                  <div className="border w-16 h-16 bg-amber-600"></div>
-               </div>
-               <div className="flex">
-                  <div className="border w-16 h-16 bg-amber-600"></div>
-                  <div className="border w-16 h-16 bg-amber-100"></div>
-                  <div className="border w-16 h-16 bg-amber-600"></div>
-                  <div className="border w-16 h-16 bg-amber-100"></div>
-                  <div className="border w-16 h-16 bg-amber-600"></div>
-                  <div className="border w-16 h-16 bg-amber-100"></div>
-                  <div className="border w-16 h-16 bg-amber-600"></div>
-                  <div className="border w-16 h-16 bg-amber-100"></div>
-               </div>
-            </div> */}
          </div>
 
          <div>{/* Pices taken from p1 and p2 */}</div>
