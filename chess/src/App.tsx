@@ -61,6 +61,7 @@ function App() {
    const showValidMoves = (type: string, color: string, row: number, col: number) => {
       if (selectedCell && selectedCell[0] == row && selectedCell[1] == col) {
          setSelectedCell(null);
+         setValidMoves([]);
          return;
       }
 
@@ -93,6 +94,203 @@ function App() {
          }
       }
 
+      if (type === "castle") {
+         for (let i = row; i < 8; i++) {
+            if (!board[i]?.[col]?.type || board[i]?.[col]?.color !== color) {
+               moves.push([i, col]);
+            } else {
+               break;
+            }
+         }
+         for (let i = row; i >= 0; i--) {
+            if (!board[i]?.[col]?.type || board[i]?.[col]?.color !== color) {
+               moves.push([i, col]);
+            } else {
+               break;
+            }
+         }
+
+         for (let i = col; i < 8; i++) {
+            if (!board[row]?.[i]?.type || board[row]?.[i]?.color !== color) {
+               moves.push([row, i]);
+            } else {
+               break;
+            }
+         }
+         for (let i = row; i >= 0; i--) {
+            if (!board[row]?.[i]?.type || board[row]?.[i]?.color !== color) {
+               moves.push([row, i]);
+            } else {
+               break;
+            }
+         }
+      }
+
+      if (type === "bishop") {
+         for (let i = row, j = col; i < 8 && j < 8; ) {
+            if (!board[i]?.[j]?.type || board[i]?.[j]?.color !== color) {
+               moves.push([i, j]);
+            } else {
+               break;
+            }
+            i++;
+            j++;
+         }
+         for (let i = row, j = col; i < 8 && j >= 0; ) {
+            if (!board[i]?.[j]?.type || board[i]?.[j]?.color !== color) {
+               moves.push([i, j]);
+            } else {
+               break;
+            }
+            i++;
+            j--;
+         }
+         for (let i = row, j = col; i >= 0 && j >= 0; ) {
+            if (!board[i]?.[j]?.type || board[i]?.[j]?.color !== color) {
+               moves.push([i, j]);
+            } else {
+               break;
+            }
+            i--;
+            j--;
+         }
+         for (let i = row, j = col; i >= 0 && j < 8; ) {
+            if (!board[i]?.[j]?.type || board[i]?.[j]?.color !== color) {
+               moves.push([i, j]);
+            } else {
+               break;
+            }
+            i--;
+            j++;
+         }
+      }
+
+      if (type === "queen") {
+         for (let i = row; i < 8; i++) {
+            if (!board[i]?.[col]?.type || board[i]?.[col]?.color !== color) {
+               moves.push([i, col]);
+            } else {
+               break;
+            }
+         }
+         for (let i = row; i >= 0; i--) {
+            if (!board[i]?.[col]?.type || board[i]?.[col]?.color !== color) {
+               moves.push([i, col]);
+            } else {
+               break;
+            }
+         }
+
+         for (let i = col; i < 8; i++) {
+            if (!board[row]?.[i]?.type || board[row]?.[i]?.color !== color) {
+               moves.push([row, i]);
+            } else {
+               break;
+            }
+         }
+         for (let i = row; i >= 0; i--) {
+            if (!board[row]?.[i]?.type || board[row]?.[i]?.color !== color) {
+               moves.push([row, i]);
+            } else {
+               break;
+            }
+         }
+         for (let i = row, j = col; i < 8 && j < 8; ) {
+            if (!board[i]?.[j]?.type || board[i]?.[j]?.color !== color) {
+               moves.push([i, j]);
+            } else {
+               break;
+            }
+            i++;
+            j++;
+         }
+         for (let i = row, j = col; i < 8 && j >= 0; ) {
+            if (!board[i]?.[j]?.type || board[i]?.[j]?.color !== color) {
+               moves.push([i, j]);
+            } else {
+               break;
+            }
+            i++;
+            j--;
+         }
+         for (let i = row, j = col; i >= 0 && j >= 0; ) {
+            if (!board[i]?.[j]?.type || board[i]?.[j]?.color !== color) {
+               moves.push([i, j]);
+            } else {
+               break;
+            }
+            i--;
+            j--;
+         }
+         for (let i = row, j = col; i >= 0 && j < 8; ) {
+            if (!board[i]?.[j]?.type || board[i]?.[j]?.color !== color) {
+               moves.push([i, j]);
+            } else {
+               break;
+            }
+            i--;
+            j++;
+         }
+      }
+
+      if (type === "horse") {
+         const blocksToJump = [
+            [-2, -1],
+            [-1, -2],
+            [-2, 1],
+            [-1, 2],
+            [2, -1],
+            [1, -2],
+            [2, 1],
+            [1, 2],
+         ];
+
+         for (const block of blocksToJump) {
+            const dirX = row + block[0];
+            const dirY = col + block[1];
+            if (
+               dirX >= 8 ||
+               dirX < 0 ||
+               dirY < 0 ||
+               dirY >= 8 ||
+               board[dirX]?.[dirY]?.color === color
+            ) {
+               continue;
+            }
+
+            moves.push([dirX, dirY]);
+         }
+      }
+
+      if (type === "king") {
+         const blocksToJump = [
+            [-1, -1],
+            [-1, 0],
+            [1, 1],
+            [0, -1],
+            [0, 1],
+            [1, -1],
+            [1, 0],
+            [1, 1],
+         ];
+
+         for (const block of blocksToJump) {
+            const dirX = row + block[0];
+            const dirY = col + block[1];
+            if (
+               dirX >= 8 ||
+               dirX < 0 ||
+               dirY < 0 ||
+               dirY >= 8 ||
+               board[dirX]?.[dirY]?.color === color
+            ) {
+               continue;
+            }
+
+            moves.push([dirX, dirY]);
+         }
+      }
+
       setValidMoves(moves);
    };
 
@@ -110,14 +308,19 @@ function App() {
                            onClick={() =>
                               showValidMoves(piece.type, piece.color, rowIndex, colIndex)
                            }
-                           className={`w-16 h-16 border flex items-center justify-center ${
-                              isLight ? "bg-amber-100" : "bg-amber-600"
+                           className={`w-16 h-16 border-2 flex items-center justify-center
+                           ${
+                              selectedCell &&
+                              rowIndex == selectedCell[0] &&
+                              colIndex === selectedCell[1] &&
+                              "border-4 border-blue-500"
                            }
+                           ${isLight ? "bg-amber-100" : "bg-amber-600"}
                             ${
                                validMoves.some(
                                   ([r, c]) => r === rowIndex && c === colIndex
                                )
-                                  ? "border-4 border-green-400"
+                                  ? "border-4 border-green-500"
                                   : ""
                             }`}
                         >
