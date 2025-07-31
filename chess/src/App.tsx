@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { INITIAL_BOARD } from "./utils/constants";
 import type { CastlingRights, Color, GameState, Piece, Position } from "./utils/types";
 import useGameHistory from "./hooks/useGameHistory";
@@ -7,8 +7,14 @@ import { applyMove, isKingInCheck } from "./utils/gameValidators";
 import { getOppositeColor } from "./utils/boardUtil";
 import GameInfo from "./components/GameInfo/GameInfo";
 import BoardComponent from "./components/Board/Board";
+import socket from "./utils/socket";
 
-function App() {
+interface AppProps {
+   mode: "local" | "online";
+   roomId?: string;
+}
+
+function App({ mode, roomId }: AppProps) {
    const [gameState, setGameState] = useState<GameState>({
       board: INITIAL_BOARD,
       currentPlayer: "w",
@@ -25,9 +31,42 @@ function App() {
    const [capturedHistory, setCapturedHistory] = useState<
       { capturedBy: Color; piece: Piece }[]
    >([]);
-
+   const [playerColor, setPlayerColor] = useState<Color | null>(null);
    const { canUndo, addToHistory, undo } = useGameHistory();
    const { getLegalMoves } = useMoveValidation(hasKingMoved, hasRookMoved);
+
+   useEffect(() => {
+      if (mode === "online" && roomId) {
+         socket.emit("join_room", roomId);
+
+         socket.on("color", (color: Color) => {
+            setPlayerColor(color);
+         });
+
+         socket.on(
+            "opponent_move",
+            (data: {
+               from: Position;
+               to: Position;
+               gameState: GameState;
+               hasKingMoved: typeof hasKingMoved;
+               hasRookMoved: typeof hasRookMoved;
+               capturedHistory: typeof capturedHistory;
+            }) => {
+               setGameState(data.gameState);
+               setHasKingMoved(data.hasKingMoved);
+               setHasRookMoved(data.hasRookMoved);
+               setCapturedHistory(data.capturedHistory);
+               setSelectedSquare(null);
+            }
+         );
+
+         return () => {
+            socket.off("color");
+            socket.off("opponent_move");
+         };
+      }
+   }, [mode, roomId]);
 
    const legalMoves = useMemo(() => {
       return selectedSquare ? getLegalMoves(gameState.board, selectedSquare) : [];
@@ -35,6 +74,8 @@ function App() {
 
    const handleSquareClick = useCallback(
       (position: Position) => {
+         // if (mode === "online" && playerColor !== gameState.currentPlayer) return;
+
          const [row, col] = position;
          const piece = gameState.board[row][col];
 
@@ -108,6 +149,22 @@ function App() {
                isInCheck: newIsInCheck,
             });
 
+            if (mode === "online" && roomId) {
+               socket.emit("move", {
+                  roomId,
+                  from: selectedSquare,
+                  to: position,
+                  gameState: {
+                     board: newBoard,
+                     currentPlayer: nextPlayer,
+                     isInCheck: newIsInCheck,
+                  },
+                  hasKingMoved,
+                  hasRookMoved,
+                  capturedHistory,
+               });
+            }
+
             setSelectedSquare(null);
          }
          // If clicking on own piece, select it
@@ -127,6 +184,9 @@ function App() {
          hasRookMoved,
          capturedHistory,
          addToHistory,
+         mode,
+         playerColor,
+         roomId,
       ]
    );
 
