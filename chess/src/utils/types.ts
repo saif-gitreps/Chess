@@ -17,6 +17,25 @@ export interface GameState {
    isInCheck: Color | null;
 }
 
+export interface ServerGameState {
+   gameState: GameState;
+   hasKingMoved: {
+      w: boolean;
+      b: boolean;
+   };
+   hasRookMoved: {
+      w: {
+         left: boolean;
+         right: boolean;
+      };
+      b: {
+         left: boolean;
+         right: boolean;
+      };
+   };
+   capturedHistory: { capturedBy: Color; piece: Piece }[];
+}
+
 export interface CastlingRights {
    w: { left: boolean; right: boolean };
    b: { left: boolean; right: boolean };

@@ -32,7 +32,7 @@ const GameInfo: React.FC<GameInfoProps> = ({
                <div className="flex items-center space-x-1 ml-1">
                   P1
                   <img
-                     src="chess-pieces/castle_w.png"
+                     src="/chess-pieces/castle_w.png"
                      alt="white"
                      className="w-8 h-8 object-contain"
                   />
@@ -41,7 +41,7 @@ const GameInfo: React.FC<GameInfoProps> = ({
                <div className="flex items-center space-x-1 ml-1">
                   P2
                   <img
-                     src="chess-pieces/castle_b.png"
+                     src="/chess-pieces/castle_b.png"
                      alt="black"
                      className="w-8 h-8 object-contain"
                   />
@@ -57,16 +57,6 @@ const GameInfo: React.FC<GameInfoProps> = ({
             >
                Undo
             </button>
-
-            <button
-               onClick={() => {
-                  window.location.reload();
-               }}
-               disabled={canUndo}
-               className="bg-white px-4 py-2 rounded-md mt-2 disabled:opacity-50 disabled:cursor-not-allowed hover:cursor-pointer border"
-            >
-               Reset
-            </button>
          </div>
       </div>
 
@@ -75,7 +65,7 @@ const GameInfo: React.FC<GameInfoProps> = ({
          {capturedPieces.byWhite.map((piece, index) => (
             <img
                key={`${piece.image}-${index}`}
-               src={piece.image}
+               src={`/chess-pieces/${piece.type}_${piece.color}.png`}
                alt={`${piece.color} ${piece.type}`}
                className="w-8 h-8 object-contain"
             />
@@ -87,7 +77,7 @@ const GameInfo: React.FC<GameInfoProps> = ({
          {capturedPieces.byBlack.map((piece, index) => (
             <img
                key={`${piece.image}-${index}`}
-               src={piece.image}
+               src={`/chess-pieces/${piece.type}_${piece.color}.png`}
                alt={`${piece.color} ${piece.type}`}
                className="w-8 h-8 object-contain"
             />

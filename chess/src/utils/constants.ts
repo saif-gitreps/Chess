@@ -1,16 +1,15 @@
 import type { Board, Position } from "./types";
-
 export const INITIAL_BOARD: Board = [
    // Row 0 - Black major pieces
    [
-      { type: "castle", color: "b", image: "chess-pieces/castle_b.png" },
-      { type: "horse", color: "b", image: "chess-pieces/horse_b.png" },
-      { type: "bishop", color: "b", image: "chess-pieces/bishop_b.png" },
-      { type: "queen", color: "b", image: "chess-pieces/queen_b.png" },
-      { type: "king", color: "b", image: "chess-pieces/king_b.png" },
-      { type: "bishop", color: "b", image: "chess-pieces/bishop_b.png" },
-      { type: "horse", color: "b", image: "chess-pieces/horse_b.png" },
-      { type: "castle", color: "b", image: "chess-pieces/castle_b.png" },
+      { type: "castle", color: "b" },
+      { type: "horse", color: "b" },
+      { type: "bishop", color: "b" },
+      { type: "queen", color: "b" },
+      { type: "king", color: "b" },
+      { type: "bishop", color: "b" },
+      { type: "horse", color: "b" },
+      { type: "castle", color: "b" },
    ],
    // Row 1 - Black pawns
    Array(8)
@@ -18,7 +17,6 @@ export const INITIAL_BOARD: Board = [
       .map(() => ({
          type: "pawn" as const,
          color: "b" as const,
-         image: "chess-pieces/pawn_b.png",
       })),
    // Rows 2–5 - Empty
    Array(8).fill(null),
@@ -31,18 +29,17 @@ export const INITIAL_BOARD: Board = [
       .map(() => ({
          type: "pawn" as const,
          color: "w" as const,
-         image: "chess-pieces/pawn_w.png",
       })),
    // Row 7 - White major pieces
    [
-      { type: "castle", color: "w", image: "chess-pieces/castle_w.png" },
-      { type: "horse", color: "w", image: "chess-pieces/horse_w.png" },
-      { type: "bishop", color: "w", image: "chess-pieces/bishop_w.png" },
-      { type: "queen", color: "w", image: "chess-pieces/queen_w.png" },
-      { type: "king", color: "w", image: "chess-pieces/king_w.png" },
-      { type: "bishop", color: "w", image: "chess-pieces/bishop_w.png" },
-      { type: "horse", color: "w", image: "chess-pieces/horse_w.png" },
-      { type: "castle", color: "w", image: "chess-pieces/castle_w.png" },
+      { type: "castle", color: "w" },
+      { type: "horse", color: "w" },
+      { type: "bishop", color: "w" },
+      { type: "queen", color: "w" },
+      { type: "king", color: "w" },
+      { type: "bishop", color: "w" },
+      { type: "horse", color: "w" },
+      { type: "castle", color: "w" },
    ],
 ];
 
