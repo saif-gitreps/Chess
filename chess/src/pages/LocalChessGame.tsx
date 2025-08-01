@@ -2,7 +2,7 @@ import App from "../App";
 
 function LocalChessGame() {
    return (
-      <div className="bg-black h-screen flex items-center justify-center flex-col">
+      <div className="bg-black min-h-screen flex items-center justify-center flex-col px-2">
          <App mode="local" />;
       </div>
    );

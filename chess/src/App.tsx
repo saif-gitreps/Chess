@@ -282,8 +282,8 @@ function App({ mode, roomId }: AppProps) {
    );
 
    return (
-      <div className="p-4">
-         <div className="items-center max-w-lg mx-auto">
+      <div className={`px-2 sm:px-4 py-4 w-full`}>
+         <div className="items-center max-w-screen-sm w-full mx-auto">
             <BoardComponent
                board={gameState.board}
                selectedSquare={selectedSquare}

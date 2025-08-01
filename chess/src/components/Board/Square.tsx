@@ -24,11 +24,12 @@ const SquareComponent: React.FC<SquareProps> = ({
       <div
          onClick={() => onClick(position)}
          className={`
-        w-16 h-16 border-2 flex items-center justify-center rounded-md cursor-pointer
-        ${isSelected ? "border-4 border-green-500" : ""}
-        ${isLight ? "bg-amber-100" : "bg-amber-600"}
-        ${isLegalMove ? "border-4 border-blue-400" : ""}
-      `}
+            w-[11vw] h-[11vw] max-w-[64px] max-h-[64px] min-w-[36px] min-h-[36px]
+            border-2 flex items-center justify-center rounded-md cursor-pointer
+            ${isSelected ? "border-4 border-green-500" : ""}
+            ${isLight ? "bg-amber-100" : "bg-amber-600"}
+            ${isLegalMove ? "border-4 border-blue-400" : ""}
+         `}
       >
          {piece && <PieceComponent piece={piece} />}
       </div>

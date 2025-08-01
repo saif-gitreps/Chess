@@ -15,7 +15,7 @@ const BoardComponent: React.FC<BoardProps> = ({
    legalMoves,
    onSquareClick,
 }) => (
-   <div className="flex justify-center">
+   <div className="flex justify-center overflow-x-auto">
       <div className="border-4">
          {board.map((row, rowIndex) => (
             <div className="flex" key={rowIndex}>

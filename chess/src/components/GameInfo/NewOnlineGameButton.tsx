@@ -3,14 +3,16 @@ import { useNavigate } from "react-router-dom";
 
 interface NewOnlineGameButtonProps {
    children: ReactNode;
+   showAlert?: boolean;
 }
 
-function NewOnlineGameButton({ children }: NewOnlineGameButtonProps) {
+function NewOnlineGameButton({ children, showAlert }: NewOnlineGameButtonProps) {
    const navigate = useNavigate();
 
    const handleOnline = () => {
       const roomId = crypto.randomUUID(); // Or generateRoomId()
       navigate(`/online/${roomId}`);
+      if (showAlert) alert("New game Started.");
    };
 
    return (

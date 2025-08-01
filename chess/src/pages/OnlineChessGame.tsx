@@ -16,23 +16,27 @@ export default function OnlineChessGame() {
    };
 
    return (
-      <div className="bg-black h-screen flex items-center justify-center flex-col">
-         <div className="flex justify-center items-center space-x-1 bg-black text-white pt-4 pb-2 font-bold">
-            <NewOnlineGameButton>New game</NewOnlineGameButton>
+      <div className="bg-black min-h-screen flex items-center justify-center flex-col px-2">
+         <div className="flex flex-col md:flex-row md:justify-evenly md:space-x-3 space-y-2 md:space-y-0 items-center bg-black text-white pt-4 px-4 font-bold">
+            <NewOnlineGameButton showAlert>New game</NewOnlineGameButton>
 
-            <div>
-               <p className="text-sm">Share link:</p>
-               <div className="flex gap-2 items-center">
-                  <input
-                     className="border px-2 py-1 w-[300px] rounded-xl"
-                     type="text"
-                     value={shareUrl}
-                     readOnly
-                  />
-                  <button onClick={handleCopy} className="text-white px-2 py-1 rounded">
+            <div className="space-y-1">
+               <div className="flex space-x-2 items-center justify-between">
+                  <div className="text-sm">Share link:</div>
+                  <button
+                     onClick={handleCopy}
+                     className="text-white py-1 px-2 border rounded-xl hover:cursor-pointer"
+                  >
                      {copied ? "Copied!" : "Copy"}
                   </button>
                </div>
+
+               <input
+                  className="border px-2 py-1 w-full md:w-[400px] max-w-full rounded-xl break-all text-sm"
+                  type="text"
+                  value={shareUrl}
+                  readOnly
+               />
             </div>
          </div>
 
