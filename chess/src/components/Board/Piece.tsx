@@ -31,7 +31,6 @@ const PieceComponent: React.FC<PieceComponentProps> = ({ piece }) => {
          alt={`${piece.color} ${piece.type}`}
          className="w-12 h-12 object-contain"
          onError={handleImageError}
-         onLoad={() => console.log(`Loaded: ${piece.image}`)}
       />
    );
 };

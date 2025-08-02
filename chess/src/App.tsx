@@ -46,6 +46,7 @@ function App({ mode, roomId }: AppProps) {
 
    useEffect(() => {
       if (mode === "online" && roomId) {
+         console.log("joining");
          socket.emit("join_room", roomId);
 
          socket.on("color", (color: Color) => {
