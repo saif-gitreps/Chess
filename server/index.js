@@ -3,6 +3,7 @@ const http = require("http");
 require("dotenv").config();
 const { Server } = require("socket.io");
 const app = express();
+const server = http.createServer(app);
 
 app.get("/", (req, res) => {
    res.send("Chess Socket.IO Server is running!");
@@ -12,7 +13,6 @@ app.get("/health", (req, res) => {
    res.json({ status: "OK", timestamp: new Date().toISOString() });
 });
 
-const server = http.createServer(app);
 const io = new Server(server, {
    cors: {
       origin: [process.env.FRONTEND_URL, "http://localhost:5173"],
