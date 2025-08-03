@@ -27,7 +27,7 @@ function App({ mode, roomId }: AppProps) {
       currentPlayer: "w",
       isInCheck: null,
    });
-
+   const [initalLoading, setInitialLoading] = useState<boolean>(true);
    const [hasKingMoved, setHasKingMoved] = useState({ w: false, b: false });
    const [hasRookMoved, setHasRookMoved] = useState<CastlingRights>({
       w: { left: false, right: false },
@@ -45,6 +45,9 @@ function App({ mode, roomId }: AppProps) {
    const { getLegalMoves } = useMoveValidation(hasKingMoved, hasRookMoved);
 
    useEffect(() => {
+      if (mode === "local") {
+         setInitialLoading(false);
+      }
       if (mode === "online" && roomId) {
          console.log("joining");
          socket.emit("join_room", roomId);
@@ -52,6 +55,7 @@ function App({ mode, roomId }: AppProps) {
          socket.on("color", (color: Color) => {
             console.log("Received color:", color);
             setPlayerColor(color);
+            setInitialLoading(false);
          });
 
          // Handle receiving the current game state when joining
@@ -285,6 +289,13 @@ function App({ mode, roomId }: AppProps) {
    return (
       <div className={`px-2 sm:px-4 py-4 w-full`}>
          <div className="items-center max-w-screen-sm w-full mx-auto">
+            {initalLoading && (
+               <div className="text-center text-gray-300 bold">
+                  Pleaes wait, realtime server is loading
+                  <span className="animate-pulse text-2xl">..</span>
+               </div>
+            )}
+
             <BoardComponent
                board={gameState.board}
                selectedSquare={selectedSquare}
